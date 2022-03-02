@@ -6,10 +6,11 @@
 ######## SGX SDK Settings ########
 
 SGX_SDK ?= /opt/intel/sgxsdk
-SGX_MODE ?= HW
+SGX_MODE ?= SIM
 SGX_ARCH ?= x64
 SGX_DEBUG ?= 1
 
+export LD_LIBRARY_PATH= opt/intel/sgxsdk/lib64:$LD_LIBRARY_PATH
 
 ifeq ($(shell getconf LONG_BIT), 32)
 	SGX_ARCH := x86
@@ -143,8 +144,8 @@ Crypto_Library_Name := sgx_tcrypto
 Enclave_Cpp_Files := Enclave/Enclave.cpp 
 Enclave_Include_Paths := -IInclude -IEnclave -I$(SGX_SDK)/include -I$(SGX_SDK)/include/tlibc -I$(SGX_SDK)/include/libcxx 
 
-Enclave_C_Flags := -nostdinc -fvisibility=hidden -fpie -fstack-protector $(Enclave_Include_Paths)
-Enclave_Cpp_Flags := $(Enclave_C_Flags) $(SGX_COMMON_CXXFLAGS) -nostdinc++
+Enclave_C_Flags := -nostdinc -fvisibility=hidden -fpie -fstack-protector $(Enclave_Include_Paths) -w
+Enclave_Cpp_Flags := $(Enclave_C_Flags) $(SGX_COMMON_CXXFLAGS) -nostdinc++ -w
 Enclave_C_Flags += $(SGX_COMMON_CFLAGS)
 
 # Enable the security flags
@@ -223,26 +224,26 @@ App/Enclave_u.h: $(SGX_EDGER8R) Enclave/Enclave.edl
 App/Enclave_u.c: App/Enclave_u.h
 
 App/Enclave_u.o: App/Enclave_u.c
-	@$(CC) $(App_C_Flags) -c $< -o $@
+	@$(CC) $(App_C_Flags) -c $< -o $@ -w
 	@echo "CC   <=  $<"
 
 $(DNET_OUT_BASE)/obj/%.o: $(DNET_OUT_BASE)/src/%.c $(DNET_DEPS_OUT)
 	@echo "Creating darknet c objects out.."
-	@$(CC) $(DNET_INC_OUT) $(App_C_Flags) -c $< -o $@
+	@$(CC) $(DNET_INC_OUT) $(App_C_Flags) -c $< -o $@ -w
 
 $(DNET_OUT_BASE)/obj/%.o: $(DNET_OUT_BASE)/src/%.cpp $(DNET_DEPS_OUT)
 	@echo "Creating darknet cpp objects out.."
-	@$(CXX) $(DNET_INC_OUT) $(App_Cpp_Flags) -c $< -o $@
+	@$(CXX) $(DNET_INC_OUT) $(App_Cpp_Flags) -c $< -o $@ -w
 
 
 					
 
 App/%.o: App/%.cpp App/Enclave_u.h
-	@$(CXX) $(App_Cpp_Flags) -c $< -o $@
+	@$(CXX) $(App_Cpp_Flags) -c $< -o $@ -w
 	@echo "CXX  <=  $<"
 
 $(App_Name): App/Enclave_u.o $(App_Cpp_Objects) $(DNET_OBJS_OUT)
-	@$(CXX) $^ -o $@ $(App_Link_Flags)
+	@$(CXX) $^ -o $@ $(App_Link_Flags) -w
 	@echo "LINK =>  $@"
 
 
@@ -255,25 +256,25 @@ Enclave/Enclave_t.h: $(SGX_EDGER8R) Enclave/Enclave.edl
 Enclave/Enclave_t.c: Enclave/Enclave_t.h
 
 Enclave/Enclave_t.o: Enclave/Enclave_t.c
-	@$(CC) $(Enclave_C_Flags) -c $< -o $@
+	@$(CC) $(Enclave_C_Flags) -c $< -o $@ -w
 	@echo "CC   <=  $<"
 
 Enclave/%.o: Enclave/%.cpp Enclave/Enclave_t.h
-	@$(CXX) $(Enclave_Cpp_Flags) -c $< -o $@
+	@$(CXX) $(Enclave_Cpp_Flags) -c $< -o $@ -w
 	@echo "CXX  <=  $<"
 
 $(DNET_IN_BASE)/obj/%.o : $(DNET_IN_BASE)/src/%.c $(DNET_DEPS_IN)
 	@echo "Creating darknet objects in enclave.."
-	@$(CC) $(DNET_INC_IN) $(Enclave_C_Flags) -c $< -o $@
+	@$(CC) $(DNET_INC_IN) $(Enclave_C_Flags) -c $< -o $@ -w
 
 
 $(DNET_TRAINER_BASE)/%.o: $(DNET_TRAINER_BASE)/%.c $(DNET_DEPS_IN)
 	@echo "Creating trainer object in enclave.."
-	@$(CC) $(DNET_INC_IN) -IEnclave $(Enclave_C_Flags) -c $< -o $@
+	@$(CC) $(DNET_INC_IN) -IEnclave $(Enclave_C_Flags) -c $< -o $@ -w
 
 
 $(Enclave_Name): Enclave/Enclave_t.o $(Enclave_Cpp_Objects) $(DNET_OBJS_IN) $(TRAINER_OBJ_IN)
-	@$(CXX) $^ -o $@ $(Enclave_Link_Flags)
+	@$(CXX) $^ -o $@ $(Enclave_Link_Flags) -w
 	@echo "LINK =>  $@"
 
 

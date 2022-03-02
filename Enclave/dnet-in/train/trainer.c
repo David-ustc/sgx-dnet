@@ -4,9 +4,9 @@
 #include "trainer.h"
 #include "checks.h"
 
-#define CIFAR_WEIGHTS "/home/ubuntu/xxx/sgx-dnet/App/dnet-out/backup/cifar.weights"
-#define TINY_WEIGHTS "/home/ubuntu/xxx/sgx-dnet/App/dnet-out/backup/tiny.weights"
-#define MNIST_WEIGHTS "/home/ubuntu/xxx/sgx-dnet/App/dnet-out/backup/mnist.weights"
+#define CIFAR_WEIGHTS "/home/pzw/code/sgx-dnet/App/dnet-out/backup/cifar.weights"
+#define TINY_WEIGHTS "/home/pzw/code/sgx-dnet/App/dnet-out/backup/tiny.weights"
+#define MNIST_WEIGHTS "/home/pzw/code/sgx-dnet/App/dnet-out/backup/mnist.weights"
 
 //global network model
 //network *net = NULL;
