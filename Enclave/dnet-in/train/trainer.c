@@ -4,9 +4,9 @@
 #include "trainer.h"
 #include "checks.h"
 
-#define CIFAR_WEIGHTS "/home/pzw/code/sgx-dnet/App/dnet-out/backup/cifar.weights"
+#define CIFAR_WEIGHTS "/home/ubuntu/xxx/sgx-dnet/App/dnet-out/backup/cifar.weights"
 #define TINY_WEIGHTS "/home/pzw/code/sgx-dnet/App/dnet-out/backup/tiny.weights"
-#define MNIST_WEIGHTS "/home/pzw/code/sgx-dnet/App/dnet-out/backup/mnist.weights"
+#define MNIST_WEIGHTS "~/Desktop/sgx-dnet/App/dnet-out/backup/mnist.weights"
 
 //global network model
 //network *net = NULL;
@@ -143,7 +143,9 @@ void ecall_classify(list *sections, list *labels, image *im)
      * load fence after pointer checks ensures the checks are done 
      * before any assignment 
      */
+//printf("done check ref pointer\n");
     sgx_lfence();
+//printf("done sgx_lfence\n");
     classify_tiny(sections, labels, im, 5);
 }
 

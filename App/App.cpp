@@ -92,11 +92,13 @@ void test_cifar(char *cfgfile)
  */
 void test_tiny(char *cfgfile)
 {
+//printf("%s\n",cfgfile);
     //read network config file
     list *sections = read_cfg(cfgfile);
     //read labels
     list *options = read_data_cfg(DATA_CFG);
     char *name_list = option_find_str(options, "names", 0);
+//printf("%s\n", name_list);
     list *plist = get_paths(name_list);
 
     //read image file
@@ -105,7 +107,7 @@ void test_tiny(char *cfgfile)
     char *input = buff;
     strncpy(input, file, 256);
     image im = load_image_color(input, 0, 0);
-
+//printf("cfg done\n");
     //classify image in enclave
     ecall_classify(global_eid, sections, plist, &im);
     //free data
@@ -166,7 +168,7 @@ int initialize_enclave(void)
         print_error_message(ret);
         return -1;
     }
-
+    else printf("initialization success!\n");
     return 0;
 }
 
@@ -181,11 +183,11 @@ int SGX_CDECL main(int argc, char *argv[])
     /* Initialize the enclave */
     if (initialize_enclave() < 0)
     {
-        printf("Enter a character before exit ...\n");
+        printf("initialize--Enter a character before exit ...\n");
         getchar();
         return -1;
     }
-
+    //printf("initialization success2!\n");
     //Create NUM_THRREADS threads
     //std::thread trd[NUM_THREADS];
 

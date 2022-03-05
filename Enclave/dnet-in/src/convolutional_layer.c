@@ -325,6 +325,7 @@ void forward_convolutional_layer(convolutional_layer l, network net)
     {
         for (j = 0; j < l.groups; ++j)
         {
+        /*
             float *a = l.weights + j * l.nweights / l.groups;
             float *b = net.workspace;
             float *c = l.output + (i * l.groups + j) * n * m;
@@ -339,6 +340,32 @@ void forward_convolutional_layer(convolutional_layer l, network net)
                 im2col_cpu(im, l.c / l.groups, l.h, l.w, l.size, l.stride, l.pad, b);
             }
             gemm(0, 0, m, n, k, 1, a, k, b, n, 1, c, n);
+            
+            printf("group %d / %d done\n", j, l.groups);
+        */
+            float *b = net.workspace;
+            float *c = l.output + (i * l.groups + j) * n * m;
+            int kk=0;
+            
+            for(; kk < l.c / l.groups ; kk++){
+                //printf("calloc pre\n");   
+                float *temp = (float*)calloc(m * n, sizeof(float));
+                float *a = (float*)calloc(l.n / l.groups * l.size * l.size, sizeof(float));
+                for(int rowindex =0 ; rowindex < l.n / l.groups; rowindex++)
+                    for(int colindex = 0; colindex < l.size*l.size; colindex++)
+                        a[rowindex*l.size*l.size+colindex] = (l.weights + j* l.nweights/l.groups)[rowindex * k + kk * l.size*l.size+ colindex];
+                float *im = net.input + ((i * l.groups + j) * l.c / l.groups + kk) * l.out_h * l.out_w;
+                im2col_cpu(im, 1, l.h, l.w, l.size, l.stride, l.pad, b);
+
+                //printf("columnize done\n");
+                gemm(0, 0, m, n, l.size*l.size, 1, a, l.size*l.size, b, n, 1, temp, n);
+                //printf("gemm done\n");
+                for(int output_index = 0; output_index < n*m; output_index++)
+                    c[output_index] = c[output_index]+temp[output_index];
+                free(temp);
+                free(a);
+            }
+            //printf("group %d / %d done\n", j, l.groups);
         }
     }
 
