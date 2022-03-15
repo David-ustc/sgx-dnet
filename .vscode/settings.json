@@ -53,6 +53,7 @@
         "cinttypes": "cpp",
         "typeinfo": "cpp",
         "darknet.h": "c",
-        "dnet_ocalls.h": "c"
+        "dnet_ocalls.h": "c",
+        "bit": "cpp"
     }
 }

@@ -1,3 +1,11 @@
+|  
+|---App  
+|---Enclave  
+|       |---src   
+|       |
+
+
+
 ## Summary
 - `sgx-dnet` is a port of the machine learning library [Darknet](http://pjreddie.com/darknet) into Intel SGX. 
 - This library can be used to securely train and test neural networks models as well as perform inference on pre-trained models following the Darknet API. 

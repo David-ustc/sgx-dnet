@@ -32,7 +32,13 @@ void fread(void *ptr, size_t size, size_t nmemb, int fp)
 
     ocall_fread(ptr, size, nmemb);
 }
-
+void conv_fread(void *ptr, int fread_index, size_t size, size_t nmemb, int fp)
+{
+    ocall_conv_fread(ptr, fread_index, size, nmemb);
+}
+void conv_weights(float* ptr, int fread_index, size_t size, size_t nmemb){
+    ocall_conv_weights(ptr, fread_index, size, nmemb);
+}
 void fwrite(void *ptr, size_t size, size_t nmemb, int fp)
 {
 

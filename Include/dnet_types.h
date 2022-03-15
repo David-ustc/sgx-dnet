@@ -128,7 +128,7 @@ struct layer;
 typedef struct layer layer;
 
 struct layer
-{
+{int fread_index;
     LAYER_TYPE type;
     ACTIVATION activation;
     COST_TYPE cost_type;

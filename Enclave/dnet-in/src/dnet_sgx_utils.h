@@ -48,6 +48,8 @@ extern "C"
 {
 #endif
     void fread(void *ptr, size_t size, size_t nmemb, int fp);
+    void conv_fread(void *ptr, int fread_index, size_t size, size_t nmemb, int fp);
+    void conv_weights(float* ptr, int fread_index, size_t size, size_t nmemb);
     void fwrite(void *ptr, size_t size, size_t nmemb, int fp);
     void printf(const char *fmt, ...);
     //redefining srand and rand

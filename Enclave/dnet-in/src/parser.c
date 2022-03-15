@@ -988,8 +988,10 @@ network *create_net_in(list *sections)
         l.smooth = option_find_float_quiet(options, "smooth", 0);
         option_unused(options);
         net->layers[count] = l;
-        if (l.workspace_size > workspace_size)
+        if (l.workspace_size > workspace_size){
             workspace_size = l.workspace_size;
+            printf("%d maximum workspace_size: %d\n", count, l.workspace_size);
+        }
         ocall_free_sec(s);
         n = n->next;
         ++count;
@@ -1313,7 +1315,7 @@ void load_convolutional_weights(layer l, int fp)
             printf("\n");
         }
     }
-    fread(l.weights, sizeof(float), num, fp);
+    conv_fread(l.weights, l.fread_index, sizeof(float), l.nweights, fp);
     //if(l.c == 3) scal_cpu(num, 1./256, l.weights, 1);
     if (l.flipped)
     {

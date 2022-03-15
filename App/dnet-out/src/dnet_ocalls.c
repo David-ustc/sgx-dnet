@@ -13,6 +13,7 @@ FILE *write_fp = NULL;
 FILE *read_fp = NULL;
 //file descriptor used by open
 int fd;
+float* conv_weights[20];
 void ocall_print_string(const char *str)
 {
     /* Proxy/Bridge will check the length and null-terminate
@@ -116,7 +117,13 @@ void ocall_fread(void *ptr, size_t size, size_t nmemb)
         abort();
     }
 }
-
+void ocall_conv_fread(void *ptr, int fread_index, size_t size, size_t nmemb){
+    conv_weights[fread_index] = calloc(nmemb, size);
+    fread(conv_weights[fread_index], size, nmemb, read_fp);
+}
+void ocall_conv_weights(float *ptr, int fread_index, size_t size, size_t nmemb){
+    for(size_t i=0; i<nmemb; i++) ptr[i] = conv_weights[fread_index][i]; 
+}
 void ocall_fwrite(void *ptr, size_t size, size_t nmemb)
 {
     int ret;

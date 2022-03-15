@@ -86,13 +86,13 @@ image get_convolutional_delta(convolutional_layer l)
 static size_t get_workspace_size(layer l)
 {
 
-    return (size_t)l.out_h * l.out_w * l.size * l.size * l.c / l.groups * sizeof(float);
+    return sizeof(float)* (size_t)l.out_h * l.out_w * l.size * l.size * l.c / l.groups ;
 }
 
 convolutional_layer make_convolutional_layer(int batch, int h, int w, int c, int n, int groups, int size, int stride, int padding, ACTIVATION activation, int batch_normalize, int binary, int xnor, int adam)
-{
+{static int fread_index=0;
     int i;
-    convolutional_layer l = {0};
+    convolutional_layer l = {0};l.fread_index=fread_index;fread_index++;
     l.type = CONVOLUTIONAL;
 
     l.groups = groups;
@@ -108,7 +108,7 @@ convolutional_layer make_convolutional_layer(int batch, int h, int w, int c, int
     l.pad = padding;
     l.batch_normalize = batch_normalize;
 
-    l.weights = calloc(c / groups * n * size * size, sizeof(float));
+    //l.weights = calloc(c / groups * n * size * size, sizeof(float));
     l.weight_updates = calloc(c / groups * n * size * size, sizeof(float));
 
     l.biases = calloc(n, sizeof(float));
@@ -123,12 +123,6 @@ convolutional_layer make_convolutional_layer(int batch, int h, int w, int c, int
     //scale = .02;
     //for(i = 0; i < c*n*size*size; ++i) l.weights[i] = scale*rand_uniform(-1, 1);
     //printf("lnweights is: %d\n",l.nweights);
-    for (i = 0; i < l.nweights; ++i)
-    {
-        //printf("i is: %d\n",i);
-        l.weights[i] = scale * rand_normal();
-        
-    }
 
     int out_w = convolutional_out_width(l);
     int out_h = convolutional_out_height(l);
@@ -305,7 +299,8 @@ void backward_bias(float *bias_updates, float *delta, int batch, int n, int size
 }
 
 void forward_convolutional_layer(convolutional_layer l, network net)
-{
+{   l.weights = calloc(l.nweights, sizeof(float));
+    conv_weights(l.weights, l.fread_index, sizeof(float), l.nweights);
     int i, j;
 
     fill_cpu(l.outputs * l.batch, 0, l.output, 1);
@@ -381,6 +376,7 @@ void forward_convolutional_layer(convolutional_layer l, network net)
     activate_array(l.output, l.outputs * l.batch, l.activation);
     if (l.binary || l.xnor)
         swap_binary(&l);
+    free(l.weights);
 }
 
 void backward_convolutional_layer(convolutional_layer l, network net)

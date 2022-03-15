@@ -1,4 +1,4 @@
-
+#include <time.h>
 #include <stdio.h>
 #include <string.h>
 #include <pwd.h>
@@ -25,7 +25,7 @@ data training_data, test_data;
 #define CIFAR_CFG_FILE "./App/dnet-out/cfg/cifar.cfg"
 #define CIFAR_TEST_DATA "./App/dnet-out/data/cifar/cifar-10-batches-bin/test_batch.bin"
 #define TINY_IMAGE "./App/dnet-out/data/eagle.jpg"
-#define TINY_CFG "./App/dnet-out/cfg/tiny.cfg"
+#define TINY_CFG "./App/dnet-out/cfg/darknet19.cfg"
 #define DATA_CFG "./App/dnet-out/data/tiny.data"
 #define MNIST_TRAIN_IMAGES "./App/dnet-out/data/mnist/train-images-idx3-ubyte"
 #define MNIST_TRAIN_LABELS "./App/dnet-out/data/mnist/train-labels-idx1-ubyte"
@@ -92,7 +92,7 @@ void test_cifar(char *cfgfile)
  */
 void test_tiny(char *cfgfile)
 {
-//printf("%s\n",cfgfile);
+clock_t start = clock();
     //read network config file
     list *sections = read_cfg(cfgfile);
     //read labels
@@ -113,6 +113,9 @@ void test_tiny(char *cfgfile)
     //free data
     free_image(im);
     printf("Classification complete..\n");
+
+clock_t end = clock();
+std::cout<<"single pic inference time: "<<double(end-start)/CLOCKS_PER_SEC<<"s"<<std::endl;  
 }
 //--------------------------------------------------------------------------------------------------------------
 /**

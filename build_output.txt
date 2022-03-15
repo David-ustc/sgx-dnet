@@ -65,14 +65,14 @@ Creating darknet objects in enclave..
 Creating trainer object in enclave..
 LINK =>  enclave.so
 tcs_num 1, tcs_max_num 1, tcs_min_pool 1
-The required memory is 152489984B.
-The required memory is 0x916d000, 148916 KB.
+The required memory is 541511680B.
+The required memory is 0x2046d000, 528820 KB.
 Succeed.
 <EnclaveConfiguration>
     <ProdID>0</ProdID>
     <ISVSVN>0</ISVSVN>
-    <StackMaxSize>0x100000</StackMaxSize>
-    <HeapMaxSize>0x9000000</HeapMaxSize>
+    <StackMaxSize>0x400000</StackMaxSize>
+    <HeapMaxSize>0x20000000</HeapMaxSize>
     <TCSNum>1</TCSNum>
     <TCSPolicy>1</TCSPolicy>
     <DisableDebug>0</DisableDebug>
@@ -80,3 +80,4 @@ Succeed.
     <MiscMask>0xFFFFFFFF</MiscMask>
 </EnclaveConfiguration>
 SIGN =>  enclave.signed.so
+The project has been built in debug simulation mode.
