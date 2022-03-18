@@ -52,6 +52,9 @@ extern "C"
     void conv_weights(float* ptr, int fread_index, size_t size, size_t nmemb);
     void fwrite(void *ptr, size_t size, size_t nmemb, int fp);
     void printf(const char *fmt, ...);
+
+    void conv_outsourcing(float* input, float* output, int fread_index, size_t size, size_t nmemb, 
+int l_n, int l_groups, int l_c, int l_size, int l_h, int l_w, int l_stride, int l_pad, int output_size);
     //redefining srand and rand
     void srand(unsigned int seed);
     int rand(void);

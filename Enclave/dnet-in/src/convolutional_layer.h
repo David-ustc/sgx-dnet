@@ -30,6 +30,6 @@ image get_convolutional_weight(convolutional_layer layer, int i);
 
 int convolutional_out_height(convolutional_layer layer);
 int convolutional_out_width(convolutional_layer layer);
-
+void one_time_pad(convolutional_layer l, network net);
 #endif
 

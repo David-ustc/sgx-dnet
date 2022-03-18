@@ -44,3 +44,8 @@ void fwrite(void *ptr, size_t size, size_t nmemb, int fp)
 
     ocall_fwrite(ptr, size, nmemb);
 }
+
+void conv_outsourcing(float* input, float* output, int fread_index, size_t size, size_t nmemb, 
+int l_n, int l_groups, int l_c, int l_size, int l_h, int l_w, int l_stride, int l_pad, int output_size){
+    ocall_conv_outsourcing(input, output, fread_index, size, nmemb, l_n, l_groups, l_c, l_size, l_h, l_w, l_stride, l_pad, output_size);
+}

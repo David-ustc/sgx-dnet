@@ -39,6 +39,20 @@ extern "C"
     
     void ocall_fwrite(void *ptr, size_t size, size_t nmemb);
 
+    void ocall_conv_outsourcing(float* input, float* output, int fread_index, size_t size, size_t nmemb, 
+int l_n, int l_groups, int l_c, int l_size, int l_h, int l_w, int l_stride, int l_pad, int output_size);
+
+    void gemm(int TA, int TB, int M, int N, int K, float ALPHA, 
+                    float *A, int lda, 
+                    float *B, int ldb,
+                    float BETA,
+                    float *C, int ldc);
+
+    void gemm_cpu(int TA, int TB, int M, int N, int K, float ALPHA, 
+            float *A, int lda, 
+            float *B, int ldb,
+            float BETA,
+            float *C, int ldc);
 #if defined(__cplusplus)
 }
 #endif

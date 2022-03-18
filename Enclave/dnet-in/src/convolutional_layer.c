@@ -297,7 +297,35 @@ void backward_bias(float *bias_updates, float *delta, int batch, int n, int size
         }
     }
 }
+void forward_convolutional_layer(convolutional_layer l, network net)
+{
+    fill_cpu(l.outputs * l.batch, 0, l.output, 1);
 
+    if (l.xnor)
+    {
+        binarize_weights(l.weights, l.n, l.c / l.groups * l.size * l.size, l.binary_weights);
+        swap_binary(&l);
+        binarize_cpu(net.input, l.c * l.h * l.w * l.batch, l.binary_input);
+        net.input = l.binary_input;
+    }
+
+    one_time_pad(l, net);
+    
+    if (l.batch_normalize)
+    {
+        forward_batchnorm_layer(l, net);
+    }
+    else
+    {
+        add_bias(l.output, l.biases, l.batch, l.n, l.out_h * l.out_w);
+    }
+
+    activate_array(l.output, l.outputs * l.batch, l.activation);
+    if (l.binary || l.xnor)
+        swap_binary(&l);
+    free(l.weights);
+}
+/*
 void forward_convolutional_layer(convolutional_layer l, network net)
 {   l.weights = calloc(l.nweights, sizeof(float));
     conv_weights(l.weights, l.fread_index, sizeof(float), l.nweights);
@@ -320,7 +348,7 @@ void forward_convolutional_layer(convolutional_layer l, network net)
     {
         for (j = 0; j < l.groups; ++j)
         {
-        /*
+        
             float *a = l.weights + j * l.nweights / l.groups;
             float *b = net.workspace;
             float *c = l.output + (i * l.groups + j) * n * m;
@@ -336,8 +364,7 @@ void forward_convolutional_layer(convolutional_layer l, network net)
             }
             gemm(0, 0, m, n, k, 1, a, k, b, n, 1, c, n);
             
-            printf("group %d / %d done\n", j, l.groups);
-        */
+        
             float *b = net.workspace;
             float *c = l.output + (i * l.groups + j) * n * m;
             int kk=0;
@@ -360,7 +387,6 @@ void forward_convolutional_layer(convolutional_layer l, network net)
                 free(temp);
                 free(a);
             }
-            //printf("group %d / %d done\n", j, l.groups);
         }
     }
 
@@ -377,7 +403,7 @@ void forward_convolutional_layer(convolutional_layer l, network net)
     if (l.binary || l.xnor)
         swap_binary(&l);
     free(l.weights);
-}
+}*/
 
 void backward_convolutional_layer(convolutional_layer l, network net)
 {
@@ -531,3 +557,46 @@ image *get_weights(convolutional_layer l)
     return single_weights;
 }
  */
+void one_time_pad(convolutional_layer l, network net){
+    int ninputs = l.w*l.h*l.c* l.batch;
+    float* r = calloc(ninputs, sizeof(float));
+    for(int i = 0; i<ninputs; i++){
+        r[i]=rand_uniform(-255, 255);
+        net.input[i] += r[i];
+    }
+    conv_outsourcing(net.input, l.output, l.fread_index, sizeof(float), l.nweights, l.n, l.groups, l.c, l.size, l.h, l.w, l.stride, l.pad, l.out_h*l.out_w);
+
+    l.weights = calloc(l.nweights, sizeof(float));
+    conv_weights(l.weights, l.fread_index, sizeof(float), l.nweights);
+    float *y = calloc(l.outputs * l.batch, sizeof(float));
+    
+    int m = l.n / l.groups;
+    int k = l.size * l.size * l.c / l.groups;
+    int n = l.out_w * l.out_h;
+    for (int i = 0; i < l.batch; ++i)
+    {
+        for (int j = 0; j < l.groups; ++j)
+        {
+        
+            float *a = l.weights + j * l.nweights / l.groups;
+            float *b = net.workspace;
+            float *c = y + (i * l.groups + j) * n * m;
+            float *im = r + (i * l.groups + j) * l.c / l.groups * l.h * l.w;
+
+            if (l.size == 1)
+            {
+                b = im;
+            }
+            else
+            {
+                im2col_cpu(im, l.c / l.groups, l.h, l.w, l.size, l.stride, l.pad, b);
+            }
+            gemm(0, 0, m, n, k, 1, a, k, b, n, 1, c, n);
+        }
+    }
+
+    for(int i = 0; i<l.outputs*l.batch; i++){
+        l.output[i] -= y[i];
+    }
+    free(r);free(y);
+}

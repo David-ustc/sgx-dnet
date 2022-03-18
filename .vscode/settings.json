@@ -54,6 +54,10 @@
         "typeinfo": "cpp",
         "darknet.h": "c",
         "dnet_ocalls.h": "c",
-        "bit": "cpp"
+        "bit": "cpp",
+        "utils.h": "c",
+        "gemm.h": "c",
+        "string.h": "c",
+        "option_list.h": "c"
     }
 }
